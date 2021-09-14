@@ -1,5 +1,5 @@
 -- name of the package to be published
-package = 'ckit'
+package = 'qmodule'
 
 -- version of the package; it's mandatory, but we don't use it in Tarantool;
 -- instead, provide below a specific branch in the package's repository at
@@ -8,7 +8,7 @@ version = 'scm-1'
 
 -- url and branch of the package's repository at GitHub
 source  = {
-    url    = 'git://github.com/tarantool/modulekit.git';
+    url    = 'git://github.com/qdrin/qmodule.git';
     branch = 'ckit';
 }
 
@@ -21,7 +21,7 @@ description = {
     A ready-to-use C module template.
     Clone and modify it to create new modules.
     ]];
-    homepage = 'https://github.com/tarantool/modulekit.git';
+    homepage = 'https://github.com/qdrin/qmodule';
     maintainer = "Roman Tsisyk <roman@tarantool.org>";
     license  = 'BSD2';
 }
