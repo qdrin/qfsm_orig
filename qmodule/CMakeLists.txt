@@ -3,9 +3,9 @@ if (APPLE)
 endif(APPLE)
 
 # Add C library
-add_library(lib SHARED lib.c)
+add_library(lib SHARED qfsmlib.c)
 target_link_libraries(lib ${MSGPUCK_LIBRARIES})
-set_target_properties(lib PROPERTIES PREFIX "" OUTPUT_NAME "lib")
+set_target_properties(lib PROPERTIES PREFIX "" OUTPUT_NAME "qfsmlib")
 
 # Install module
 install(FILES init.lua DESTINATION ${TARANTOOL_INSTALL_LUADIR}/${PROJECT_NAME}/)
