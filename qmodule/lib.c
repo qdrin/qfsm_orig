@@ -21,7 +21,7 @@ ckit_func(struct lua_State *L)
 
 /* exported function */
 LUA_API int
-luaopen_ckit_lib(lua_State *L)
+luaopen_qmodule_lib(lua_State *L)
 {
 	/* result returned from require('ckit.lib') */
 	lua_newtable(L);

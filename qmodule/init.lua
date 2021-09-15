@@ -9,7 +9,7 @@
 local log = require('log') -- some other Tarantool module
 
 -- C library
-local clib = require('ckit.lib')
+local clib = require('qmodule.lib')
 -- Now you can use exported C functions from 'ckit/lib.c' submodule in your code
 
 --
