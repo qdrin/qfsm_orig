@@ -1,4 +1,4 @@
-#include "qstatemachine.h"
+#include <QStateMachine>
 #include <iostream>
 using namespace std;
 
