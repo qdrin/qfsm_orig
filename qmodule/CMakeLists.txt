@@ -3,7 +3,7 @@ if (APPLE)
 endif(APPLE)
 
 # Add C library
-add_library(lib SHARED qfsmlib.c)
+add_library(lib SHARED qfsmlib.cpp)
 target_link_libraries(lib ${MSGPUCK_LIBRARIES})
 set_target_properties(lib PROPERTIES PREFIX "" OUTPUT_NAME "qfsmlib")
 
