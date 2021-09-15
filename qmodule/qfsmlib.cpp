@@ -22,18 +22,12 @@ static int ckit_func(struct lua_State *L)
 static const char module_label[] = "qfsmdriver";
 LUA_API "C" int luaopen_qmodule_qfsmlib(lua_State *L)
 {
-	/* result returned from require('ckit.lib') */
-  	static const struct luaL_Reg methods [] = {
-		{"func", ckit_func},
+  lua_newtable(L);
+  static const struct luaL_Reg methods [] = {
+		{"cadd", ckit_func},
 		{NULL, NULL}
 	};
-
-	lua_newtable(L);
-	luaL_register(L, NULL, methods);
-	// lua_setfield(L, -2, "__index");
-	// lua_pushstring(L, module_label);
-	// lua_setfield(L, -2, "__metatable");
-	// lua_pop(L, 1);
+  luaL_register(L, NULL, methods);
 	return 1;
 }
 /* vim: syntax=c ts=8 sts=8 sw=8 noet */

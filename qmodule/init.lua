@@ -36,6 +36,6 @@ end
 -- result returned from require('ckit')
 return {
     func = func; -- pure Lua function
-    cfunc = clib.func; -- C function
+    cadd = clib.cadd; -- C function
 }
 -- vim: ts=4 sts=4 sw=4 et
