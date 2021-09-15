@@ -22,7 +22,7 @@ description = {
     Clone and modify it to create new modules.
     ]];
     homepage = 'https://github.com/qdrin/qmodule';
-    maintainer = "Roman Tsisyk <roman@tarantool.org>";
+    maintainer = "Dmitry Kudrin <qdrin@mail.ru>";
     license  = 'BSD2';
 }
 
