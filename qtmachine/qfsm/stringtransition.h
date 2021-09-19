@@ -1,17 +1,15 @@
 #ifndef STRINGTRANSITION_H
 #define STRINGTRANSITION_H
 
-#include <QAbstractTransition>
+#include <QStateMachine>
+#include <QSignalTransition>
 #include <QEvent>
 #include <QString>
-#include "stringevent.h"
 
-class StringTransition: public QAbstractTransition
+class StringTransition: public QSignalTransition
 {
-    Q_OBJECT
 public:
-    StringTransition(const QString& _value);
-
+    StringTransition(QObject *sender, const QString& _value);
 protected:
     virtual bool eventTest(QEvent *e) override;
 

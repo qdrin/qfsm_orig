@@ -1,43 +1,51 @@
+#include <QFinalState>
 #include "pimachine.h"
-#include <QTextStream>
 
-PIMachine::PIMachine()
+PIMachine::PIMachine(QObject *_parent):
+    m_parent(_parent)
 {
-    m_machine = new QStateMachine;
+    m_machine = new QStateMachine(_parent);
     buildMachine();
     m_machine->start();
 }
 
 void PIMachine::buildMachine()
 {
-    QState *s1 = new QState(m_machine);
-    QState *s2 = new QState(m_machine);
-    QState *s3 = new QState(m_machine);
-    s1->assignProperty(m_machine, "state", "1");
-    s2->assignProperty(m_machine, "state", "2");
-    s3->assignProperty(m_machine, "state", "3");
-    // QFinalState *sFinal = new QFinalState();
+    QState *pendingActivate = new QState(m_machine);
+    QState *activeTrial = new QState(m_machine);
+    QState *aborted = new QState(m_machine);
+    QState *pendingDisconnect = new QState(m_machine);
+    QState *disconnect = new QState(m_machine);
+    pendingActivate->assignProperty(m_machine, "state", "PENDING_ACTIVATE");
+    aborted->assignProperty(m_machine, "state", "ABORTED");
+    activeTrial->assignProperty(m_machine, "state", "ACTIVE_TRIAL");
+    pendingDisconnect->assignProperty(m_machine, "state", "PENDING_DISCONNECT");
+    disconnect->assignProperty(m_machine, "state", "DISCONNECT");
+    QFinalState *sFinal = new QFinalState(m_machine);
     m_machine->setProperty("state", "UNDEFINED");
 
-    StringTransition *t1 = new StringTransition("2");
-    StringTransition *t2 = new StringTransition("3");
-    StringTransition *t3 = new StringTransition("1");
+    StringTransition *t1 = new StringTransition(this, "trial_activation_completed");
+    StringTransition *t2 = new StringTransition(this, "activation_aborted");
+    StringTransition *t3 = new StringTransition(this, "deactivation_started");
+    StringTransition *t4 = new StringTransition(this, "deactivation_completed");
 
-    t1->setTargetState(s2);
-    t2->setTargetState(s3);
-    t3->setTargetState(s1);
+    t1->setTargetState(activeTrial);
+    pendingActivate->addTransition(t1);
 
-    s1->addTransition(t1);
-    s2->addTransition(t2);
-    s3->addTransition(t3);
+    t2->setTargetState(aborted);
+    pendingActivate->addTransition(t2);
 
-    m_machine->setInitialState(s1);
-    m_machine->setProperty("state", "UNDEFINED");
+    t3->setTargetState(pendingDisconnect);
+    activeTrial->addTransition(t3);
+
+    t4->setTargetState(disconnect);
+    pendingDisconnect->addTransition(t4);
+
+    m_machine->setInitialState(pendingActivate);
 }
 
-void PIMachine::postEvent(const QString eventString)
+void PIMachine::externalEventProcess(QString eventType)
 {
-    QTextStream cout(stdout);
-    cout << "PIMachine.postEvent(\"" << eventString << "\") started\n";
-    m_machine->postEvent(new StringEvent(eventString));
+    emit externalSignal(eventType);
 }
+

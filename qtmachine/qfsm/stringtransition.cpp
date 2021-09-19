@@ -1,27 +1,18 @@
-#include <QTextStream>
 #include "stringtransition.h"
 
-StringTransition::StringTransition(const QString& _value):
+StringTransition::StringTransition(QObject *sender, const QString& _value):
+    QSignalTransition(sender, SIGNAL(externalSignal(QString))),
     m_value(_value)
 {
-    QTextStream cout(stdout);
-    cout << "StringTransition(\"" << m_value << "\") called\n";
 }
 
 bool StringTransition::eventTest(QEvent *e)
 {
-    QTextStream cout(stdout);
-    cout << "eventTest called: eventType: " << e->type() << "\n";
-    cout.flush();
-    if (e->type() != QEvent::Type(StringEvent::type())) // StringEvent
+    if (!QSignalTransition::eventTest(e))
         return false;
-    StringEvent *se = static_cast<StringEvent*>(e);
-    cout << "eventTest(\"" << se->value() << "\" called\n";
-    return (m_value == se->value());
+    QStateMachine::SignalEvent *se = static_cast<QStateMachine::SignalEvent*>(e);
+    return (m_value == se->arguments().at(0));
 }
 
 void StringTransition::onTransition(QEvent *e) {
-    QTextStream cout(stdout);
-    cout << "onTrasition called\n";
-    cout.flush();
 }

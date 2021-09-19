@@ -2,18 +2,22 @@
 #define PIMACHINE_H
 #include <QStateMachine>
 #include <QString>
-#include <QAbstractAnimation>
 #include "stringtransition.h"
 
 class PIMachine: public QObject
 {
+    Q_OBJECT
 private:
+    QObject *m_parent;
     QStateMachine *m_machine;
     void buildMachine();
 public:
-    PIMachine();
+    PIMachine(QObject *_parent = nullptr);
     QStateMachine *machine() { return m_machine; }
-    void postEvent(const QString eventString);
+signals:
+    void externalSignal(QString eventType);
+public slots:
+    void externalEventProcess(QString eventType);
 };
 
 #endif // PIMACHINE_H
