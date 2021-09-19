@@ -16,5 +16,8 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 add_executable(qfsm
   main.cpp
+  pimachine.cpp
+  stringevent.cpp
+  stringtransition.cpp
 )
 target_link_libraries(qfsm Qt${QT_VERSION_MAJOR}::Core)

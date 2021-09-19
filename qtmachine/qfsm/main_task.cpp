@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 #include <QStateMachine>
-#include <QEventTransition>
+#include <QAbstractTransition>
 #include <QTextStream>
 #include <QtWidgets/QLabel>
 #include <QTimer>
@@ -23,7 +23,7 @@ struct StringEvent : public QEvent
 
 //----------------------------------------------------------------
 // Класс перехода по строке
-class StringTransition : public QEventTransition
+class StringTransition : public QAbstractTransition
 {
     Q_OBJECT
 public:
@@ -71,6 +71,9 @@ public:
     }
 signals:
     void finished();
+    void signal1();
+    void signal2();
+    void signal3();
 public slots:
     void run()
     {
@@ -81,7 +84,8 @@ public slots:
         QString evs = evs_array[evs_ind++];
         cout << "current state: '" << machine.property("state").toString() << "'\n";
         cout.flush();
-        postEvent(evs);
+        // postEvent(evs);
+        emit signal2();
         cout << "new state: '" << machine.property("state").toString() << "'\n";
         cout.flush();
         // finishing task
@@ -111,6 +115,9 @@ void Task::buildStateMachine()
     s1->addTransition(t1);
     s2->addTransition(t2);
     s3->addTransition(t3);
+    s1->addTransition(this, SIGNAL(signal2()), s2);
+    s2->addTransition(this, SIGNAL(signal3()), s3);
+    s3->addTransition(this, SIGNAL(signal1()), s1);
 
     machine.setInitialState(s1);
     machine.setProperty("state", "UNDEFINED");
