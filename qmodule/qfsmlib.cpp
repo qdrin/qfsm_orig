@@ -2,6 +2,7 @@
 #include <iostream>
 #include <tarantool/module.h>
 #include <lua.hpp>
+#include "pimachine.h"
 // #include <lua.h>
 // #include <lualib.h>
 // #include <lauxlib.h>
@@ -18,6 +19,14 @@ static int ckit_func(struct lua_State *L)
 	return 1; /* one return value */
 }
 
+static int new_machine(struct lua_State *L)
+{
+  std::cout << "new_machine started\n";
+  PIMachine *machine = new PIMachine;
+  lua_pushstring(L, "PIMachine");
+	return 1; /* one return value */
+}
+
 /* exported function */
 static const char module_label[] = "qfsmdriver";
 LUA_API "C" int luaopen_qmodule_qfsmlib(lua_State *L)
@@ -25,6 +34,7 @@ LUA_API "C" int luaopen_qmodule_qfsmlib(lua_State *L)
   lua_newtable(L);
   static const struct luaL_Reg methods [] = {
 		{"cadd", ckit_func},
+    {"new", new_machine},
 		{NULL, NULL}
 	};
   luaL_register(L, NULL, methods);

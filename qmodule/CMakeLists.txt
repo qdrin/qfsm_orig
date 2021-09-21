@@ -3,8 +3,13 @@ if (APPLE)
 endif(APPLE)
 
 # Add C library
-add_library(lib SHARED qfsmlib.cpp)
+add_library(lib SHARED
+  qfsmlib.cpp
+  pimachine.cpp
+  stringtransition.cpp
+)
 target_link_libraries(lib ${MSGPUCK_LIBRARIES})
+target_link_libraries(lib Qt${QT_VERSION_MAJOR}::Core)
 set_target_properties(lib PROPERTIES PREFIX "" OUTPUT_NAME "qfsmlib")
 
 # Install module

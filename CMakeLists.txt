@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-# project(qmodule C)
 project(qmodule C CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -8,10 +7,18 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})
 
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "/home/qdrin/Qt")
 # Find Tarantool and Lua dependecies
 set(TARANTOOL_FIND_REQUIRED ON)
 find_package(Tarantool)
-include_directories(${TARANTOOL_INCLUDE_DIRS})
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED) #New
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)  #New
+include_directories(
+  ${TARANTOOL_INCLUDE_DIRS}
+  /home/qdrin/Qt/5.15.2/gcc_64/include    # TODO: Change to some VAR
+  /home/qdrin/Qt/5.15.2/gcc_64/include/QtCore
+
+)
 
 # Find other dependencies
 

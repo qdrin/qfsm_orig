@@ -19,6 +19,7 @@ install_manifest.txt
 *~
 .gdb_history
 */.vscode
+/.vscode
 ./build
 /build
 qtmachine/build-qfsm-Desktop_Qt_5_15_2_GCC_64bit-Debug

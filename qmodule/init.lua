@@ -10,7 +10,7 @@ local log = require('log') -- some other Tarantool module
 
 -- C library
 local clib = require('qmodule.qfsmlib')
--- Now you can use exported C functions from 'qmodule/lib.c' submodule in your code
+-- Now you can use exported CPP functions from 'qmodule/lib.c' submodule in your code
 
 --
 -- Constants
@@ -35,7 +35,8 @@ end
 
 -- result returned from require('ckit')
 return {
-    func = func; -- pure Lua function
-    cadd = clib.cadd; -- C function
+    func = func, -- pure Lua function
+    cadd = clib.cadd, -- CPP function
+    new = clib.new,  -- new function
 }
 -- vim: ts=4 sts=4 sw=4 et

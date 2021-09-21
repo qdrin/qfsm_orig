@@ -12,24 +12,32 @@
 QTextStream cout(stdout);
 QTextStream cin(stdin);
 
-class Test: public QObject
+class StateMachineController: public QObject
 {
     Q_OBJECT
 private:
-    PIMachine *m_machine;
+    PIMachine *pi_machine;
 public:
-        Test(PIMachine *_m_machine = nullptr): m_machine(_m_machine) {}
+        StateMachineController(PIMachine *_pi_machine = nullptr): pi_machine(_pi_machine) {}
+        ~StateMachineController() {
+            if (pi_machine != nullptr) {
+                pi_machine->machine()->stop();
+                delete pi_machine;
+            }
+        }
+        PIMachine *newMachine() { pi_machine = pi_machine == nullptr ? new PIMachine : pi_machine; return pi_machine; }
 signals:
     void finished();
     void externalEvent(QString);
 public slots:
+    void sendEvent(QString ev) { emit externalEvent(ev); };
     void run()
     {
         QString choice;
         cout << "Start processing events\n";
         while(true)
         {
-            cout << "state: " << m_machine->machine()->property("state").toString() << Qt::endl;
+            cout << "state: " << pi_machine->machine()->property("state").toString() << Qt::endl;
             cout << "Input eventType: ";
             cout.flush();
             cin >> choice;
@@ -39,7 +47,7 @@ public slots:
             }
             emit externalEvent(choice);
         }
-        cout << "Test::run() finished\n";
+        cout << "StateMachineController::run() finished\n";
         emit finished();
     }
 };
@@ -47,12 +55,12 @@ public slots:
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    PIMachine machine;
-    Test *test = new Test(&machine);
+    StateMachineController *contr = new StateMachineController;
+    PIMachine *machine = contr->newMachine();
 
-    QTimer::singleShot(0, test, SLOT(run()));
-    QObject::connect(test, SIGNAL(finished()), &app, SLOT(quit()));
-    QObject::connect(test, &Test::externalEvent, &machine, &PIMachine::externalEventProcess);
+    QTimer::singleShot(0, contr, SLOT(run()));
+    QObject::connect(contr, SIGNAL(finished()), &app, SLOT(quit()));
+    QObject::connect(contr, &StateMachineController::externalEvent, machine, &PIMachine::externalEventProcess);
     return app.exec();
 }
 
