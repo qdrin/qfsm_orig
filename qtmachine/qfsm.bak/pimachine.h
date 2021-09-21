@@ -1,9 +1,10 @@
 #ifndef PIMACHINE_H
 #define PIMACHINE_H
 #include <QStateMachine>
+#include <QString>
 #include "stringtransition.h"
 
-class PiMachine: public QObject
+class PIMachine: public QObject
 {
     Q_OBJECT
 private:
@@ -11,8 +12,8 @@ private:
     QStateMachine *m_machine;
     void buildMachine();
 public:
-    PiMachine(QObject *_parent = nullptr);
-    QStateMachine *machine();
+    PIMachine(QObject *_parent = nullptr);
+    QStateMachine *machine() { return m_machine; }
 signals:
     void externalSignal(QString eventType);
 public slots:

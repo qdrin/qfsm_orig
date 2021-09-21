@@ -9,8 +9,10 @@
 local log = require('log') -- some other Tarantool module
 
 -- C library
+
+print("Loading clib")
 local clib = require('qmodule.qfsmlib')
--- Now you can use exported CPP functions from 'qmodule/lib.c' submodule in your code
+-- Now you can use exported CPP functions from 'qmodule/qfsmlib.c' submodule in your code
 
 --
 -- Constants

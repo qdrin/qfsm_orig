@@ -1,30 +1,31 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.8.0 FATAL_ERROR)
 
-project(qmodule C CXX)
+project(qmodule CXX)
+set(AUTTOMOC ON)
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo)
 endif()
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})
-
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} "/home/qdrin/Qt")
+set(LD_LIBRARY_PATH "/usr/lib/x86_64-linux-gnu")
+set(CMAKE_PREFIX_PATH
+  ${CMAKE_PREFIX_PATH}
+)
 # Find Tarantool and Lua dependecies
 set(TARANTOOL_FIND_REQUIRED ON)
 find_package(Tarantool)
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED) #New
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)  #New
+# find_package(Qt NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
+find_package(Qt5 COMPONENTS Core REQUIRED)
+message(STATUS "Qt version is Qt${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}")
 include_directories(
   ${TARANTOOL_INCLUDE_DIRS}
-  /home/qdrin/Qt/5.15.2/gcc_64/include    # TODO: Change to some VAR
-  /home/qdrin/Qt/5.15.2/gcc_64/include/QtCore
-
 )
 
 # Find other dependencies
 
 # Set CFLAGS
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wextra")
+# set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wextra")
 # Set CXXFLAGS
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra")

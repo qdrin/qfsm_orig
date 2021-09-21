@@ -1,11 +1,11 @@
 /* QStateMachine submodule for Tarantool */
-#include <iostream>
+#include <QTextStream>
 #include <tarantool/module.h>
 #include <lua.hpp>
 #include "pimachine.h"
-// #include <lua.h>
-// #include <lualib.h>
-// #include <lauxlib.h>
+#include "testclass.h"
+
+QTextStream cout(stdout);
 
 /* internal function */
 static int ckit_func(struct lua_State *L)
@@ -14,16 +14,18 @@ static int ckit_func(struct lua_State *L)
 		luaL_error(L, "Usage: ckit_func(a: number, b: number)");
 	int a = lua_tointeger(L, 1);
 	int b = lua_tointeger(L, 2);
-  std::cout << "Sum: " << a << " and " << b << std::endl;
+  cout << "Sum: " << a << " and " << b << Qt::endl;
 	lua_pushinteger(L, a + b);
 	return 1; /* one return value */
 }
 
 static int new_machine(struct lua_State *L)
 {
-  std::cout << "new_machine started\n";
-  PIMachine *machine = new PIMachine;
-  lua_pushstring(L, "PIMachine");
+  cout << "new_machine started\n";
+  // PiMachine *machine = new PiMachine(nullptr);
+  StringTransition t1(nullptr, "aaa");
+  TestClass t("123");
+  lua_pushstring(L, t.getString().c_str());
 	return 1; /* one return value */
 }
 

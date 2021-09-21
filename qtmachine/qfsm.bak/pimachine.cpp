@@ -1,16 +1,15 @@
+#include <QFinalState>
 #include "pimachine.h"
 
-PiMachine::PiMachine(QObject *_parent):
+PIMachine::PIMachine(QObject *_parent):
     m_parent(_parent)
 {
-    m_machine = new QStateMachine(m_parent);
+    m_machine = new QStateMachine(_parent);
     buildMachine();
     m_machine->start();
 }
 
-inline QStateMachine* PiMachine::machine() { return m_machine; }
-
-void PiMachine::buildMachine()
+void PIMachine::buildMachine()
 {
     QState *pendingActivate = new QState(m_machine);
     QState *activeTrial = new QState(m_machine);
@@ -22,6 +21,7 @@ void PiMachine::buildMachine()
     activeTrial->assignProperty(m_machine, "state", "ACTIVE_TRIAL");
     pendingDisconnect->assignProperty(m_machine, "state", "PENDING_DISCONNECT");
     disconnect->assignProperty(m_machine, "state", "DISCONNECT");
+    QFinalState *sFinal = new QFinalState(m_machine);
     m_machine->setProperty("state", "UNDEFINED");
 
     StringTransition *t1 = new StringTransition(this, "trial_activation_completed");
@@ -44,7 +44,7 @@ void PiMachine::buildMachine()
     m_machine->setInitialState(pendingActivate);
 }
 
-void PiMachine::externalEventProcess(QString eventType)
+void PIMachine::externalEventProcess(QString eventType)
 {
     emit externalSignal(eventType);
 }
