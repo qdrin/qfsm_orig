@@ -3,7 +3,7 @@
 #include <tarantool/module.h>
 #include <lua.hpp>
 #include "pimachine.h"
-#include "testclass.h"
+#include "stringtransition.h"
 
 QTextStream cout(stdout);
 
@@ -24,8 +24,7 @@ static int new_machine(struct lua_State *L)
   cout << "new_machine started\n";
   // PiMachine *machine = new PiMachine(nullptr);
   StringTransition t1(nullptr, "aaa");
-  TestClass t("123");
-  lua_pushstring(L, t.getString().c_str());
+  lua_pushstring(L, "lua_pushstring");
 	return 1; /* one return value */
 }
 

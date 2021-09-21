@@ -21,7 +21,7 @@ install_manifest.txt
 */.vscode
 /.vscode
 ./build
-/build
+/build*/
 qtmachine/build-qfsm-Desktop_Qt_5_15_2_GCC_64bit-Debug
 /.rocks
 VERSION

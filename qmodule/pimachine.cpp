@@ -1,28 +1,28 @@
+#include <QFinalState>
 #include "pimachine.h"
+#include "stringtransition.h"
 
-PiMachine::PiMachine(QObject *_parent):
+PIMachine::PIMachine(QObject *_parent):
     m_parent(_parent)
 {
-    m_machine = new QStateMachine(m_parent);
     buildMachine();
-    m_machine->start();
+    start();
 }
 
-inline QStateMachine* PiMachine::machine() { return m_machine; }
-
-void PiMachine::buildMachine()
+void PIMachine::buildMachine()
 {
-    QState *pendingActivate = new QState(m_machine);
-    QState *activeTrial = new QState(m_machine);
-    QState *aborted = new QState(m_machine);
-    QState *pendingDisconnect = new QState(m_machine);
-    QState *disconnect = new QState(m_machine);
-    pendingActivate->assignProperty(m_machine, "state", "PENDING_ACTIVATE");
-    aborted->assignProperty(m_machine, "state", "ABORTED");
-    activeTrial->assignProperty(m_machine, "state", "ACTIVE_TRIAL");
-    pendingDisconnect->assignProperty(m_machine, "state", "PENDING_DISCONNECT");
-    disconnect->assignProperty(m_machine, "state", "DISCONNECT");
-    m_machine->setProperty("state", "UNDEFINED");
+    QState *pendingActivate = new QState(this);
+    QState *activeTrial = new QState(this);
+    QState *aborted = new QState(this);
+    QState *pendingDisconnect = new QState(this);
+    QState *disconnect = new QState(this);
+    pendingActivate->assignProperty(this, "state", "PENDING_ACTIVATE");
+    aborted->assignProperty(this, "state", "ABORTED");
+    activeTrial->assignProperty(this, "state", "ACTIVE_TRIAL");
+    pendingDisconnect->assignProperty(this, "state", "PENDING_DISCONNECT");
+    disconnect->assignProperty(this, "state", "DISCONNECT");
+    // QFinalState *sFinal = new QFinalState(m_machine);
+    setProperty("state", "UNDEFINED");
 
     StringTransition *t1 = new StringTransition(this, "trial_activation_completed");
     StringTransition *t2 = new StringTransition(this, "activation_aborted");
@@ -41,10 +41,10 @@ void PiMachine::buildMachine()
     t4->setTargetState(disconnect);
     pendingDisconnect->addTransition(t4);
 
-    m_machine->setInitialState(pendingActivate);
+    setInitialState(pendingActivate);
 }
 
-void PiMachine::externalEventProcess(QString eventType)
+void PIMachine::externalEventProcess(QString eventType)
 {
     emit externalSignal(eventType);
 }
