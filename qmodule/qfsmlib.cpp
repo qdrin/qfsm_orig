@@ -4,6 +4,7 @@
 #include <lua.hpp>
 #include "pimachine.h"
 #include "stringtransition.h"
+#include "smcontroller.h"
 
 using namespace std;
 static const char module_label[] = "__qfsm_driver";

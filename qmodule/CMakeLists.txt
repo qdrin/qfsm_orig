@@ -16,7 +16,7 @@ message(STATUS MOC_SOURCES ${MOC_SOURCES})
 # Add CPP library
 add_library(lib SHARED
   qfsmlib.cpp
-  testclass.cpp
+  smcontroller.cpp
   pimachine.cpp
   stringtransition.cpp
   ${MOC_SOURCES}

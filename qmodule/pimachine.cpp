@@ -6,7 +6,6 @@ PIMachine::PIMachine(QObject *_parent):
     m_parent(_parent)
 {
     buildMachine();
-    start();
 }
 
 void PIMachine::buildMachine()

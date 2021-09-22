@@ -1,44 +1,31 @@
-#include "pimachine.h"
+#include <QThread>
 #include <QTextStream>
+#include <QVector>
+#include "pimachine.h"
+
+struct MachineData {
+  int id;
+  QThread *thread;
+  PIMachine* machine;
+};
 
 class StateMachineController: public QObject
 {
-    Q_OBJECT
+  Q_OBJECT
 private:
-    PIMachine *pi_machine;
+  QVector<MachineData*> machines;
+  int maxMachines;
+  bool m_isRunning;
 public:
-        StateMachineController(PIMachine *_pi_machine = nullptr): pi_machine(_pi_machine) {}
-        ~StateMachineController() {
-            if (pi_machine != nullptr) {
-                pi_machine->stop();
-                delete pi_machine;
-            }
-        }
-        PIMachine *newMachine() { pi_machine = pi_machine == nullptr ? new PIMachine : pi_machine; return pi_machine; }
+  StateMachineController(): StateMachineController(1) {};
+  StateMachineController(int _maxMachines): maxMachines(_maxMachines), m_isRunning(false) {};
+  ~StateMachineController();
+  int newMachine();
 signals:
-    void finished();
-    void externalEvent(QString);
+  void finished();
+  void externalEvent(const QString &);
 public slots:
-    void sendEvent(QString ev) { emit externalEvent(ev); };
-    void run()
-    {
-        QTextStream cout(stdout);
-        QTextStream cin(stdin);
-        QString choice;
-        cout << "Start processing events\n";
-        while(true)
-        {
-            cout << "state: " << pi_machine->property("state").toString() << Qt::endl;
-            cout << "Input eventType: ";
-            cout.flush();
-            cin >> choice;
-            if(choice == "q")
-            {
-                break;
-            }
-            emit externalEvent(choice);
-        }
-        cout << "StateMachineController::run() finished\n";
-        emit finished();
-    }
+  void stop() {m_isRunning = false; };
+  void sendEvent(const QString &ev);
+  void run();
 };
