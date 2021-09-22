@@ -9,36 +9,57 @@
 local log = require('log') -- some other Tarantool module
 
 -- C library
-
-print("Loading clib")
-local clib = require('qmodule.qfsmlib')
+local qfsmlib = require('qmodule.qfsmlib')
 -- Now you can use exported CPP functions from 'qmodule/qfsmlib.c' submodule in your code
-
---
--- Constants
---
-
--- local variables are only visible from this file
-local SOME_CONSTANT = 10
 
 --
 -- Internal functions
 --
 
--- Some internal function
-local function func(a, b)
-    log.info("func() called with a=%s b=%s", a, b)
-    return a + b
+local machine_mt = {
+  __index = {
+    send_event = function(self)
+      local status, res = self.conn:send_event()
+      if status < 0 then return nil, res end
+      return res
+    end,
+    close = function(self)
+      local res, error = self.conn:close()
+      if res < 0 then return nil, error end
+      return res
+    end,
+    init = function(self)
+      log.info("machine.init call function %s", self.conn.init)
+      local res, error = self.conn:init()
+      if res < 0 then return nil, error end
+      return res
+    end,
+    get = function(self)
+      log.info("machine.init call function %s", self.conn.init)
+      local status, res = self.conn:get()
+      if status < 0 then return nil, res end
+      return res
+    end,
+  }
+}
+
+local function new()
+  log.info("new called")
+  local res, m = qfsmlib.new()
+  log.info("new result=%s", res)
+  if res < 0 then return nil, m end
+  log.warn(m)
+  local machine = setmetatable({
+    conn = m,
+}, machine_mt)
+  log.info(machine)
+  return machine
 end
 
 --
 -- Exported functions
 --
-
--- result returned from require('ckit')
 return {
-    func = func, -- pure Lua function
-    cadd = clib.cadd, -- CPP function
-    new = clib.new,  -- new function
+    new = new,
+    qfsmlib = qfsmlib,
 }
--- vim: ts=4 sts=4 sw=4 et
