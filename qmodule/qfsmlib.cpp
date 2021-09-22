@@ -14,7 +14,7 @@ static int ckit_func(struct lua_State *L)
 		luaL_error(L, "Usage: ckit_func(a: number, b: number)");
 	int a = lua_tointeger(L, 1);
 	int b = lua_tointeger(L, 2);
-  cout << "Sum: " << a << " and " << b << Qt::endl;
+  cout << "Sum: " << a << " and " << b << "\n";
 	lua_pushinteger(L, a + b);
 	return 1; /* one return value */
 }

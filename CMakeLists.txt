@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 
 project(qmodule CXX)
 set(AUTOMOC ON)
@@ -6,11 +6,13 @@ set(AUTOMOC ON)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE RelWithDebInfo)
 endif()
+message(STATUS CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" ${CMAKE_MODULE_PATH})
 set(QT_DIR "/home/qdrin/Qt/5.15.2/gcc_64")
 set(LD_LIBRARY_PATH "${QT_DIR}/lib")
 set(Qt5_DIR "${LD_LIBRARY_PATH}/cmake/Qt5")
 message(STATUS "Qt search path is ${Qt5_DIR}")
+message(STATUS "LD_LIBRARY_PATH is ${LD_LIBRARY_PATH}")
 set(CMAKE_PREFIX_PATH
   ${CMAKE_PREFIX_PATH}
   ${Qt5_DIR}
