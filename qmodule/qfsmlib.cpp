@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QString>
 #include <QThread>
+#include <QDebug>
 #include <tarantool/module.h>
 #include <lua.hpp>
 #include "pimachine.h"
@@ -50,10 +51,8 @@ static int luaPismSendEvent(struct lua_State *L)
     return 2;
   }
   int id = lua_tointeger(L, -2);
-  cout << "id=" << id << endl;
-  // int evlen = lua_strlen(L, -1);
   const char* ev = lua_tostring(L, -1);
-  cout << "luaPismSendEvent: id=" << id << ", event: " << ev << endl;
+  qDebug() << "luaPismSendEvent: id=" << id << ", event: " << ev << Qt::endl;
   QString result = controller->sendEvent(id, ev);
   lua_pushinteger(L, 1);
   lua_pushstring(L, result.toStdString().c_str());

@@ -1,6 +1,6 @@
 #ifndef STRINGTRANSITION_H
 #define STRINGTRANSITION_H
-
+#include <QDebug>
 #include <QStateMachine>
 #include <QSignalTransition>
 #include <QEvent>

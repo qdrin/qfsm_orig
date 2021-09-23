@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QThread>
 #include <QTextStream>
 #include <QVector>

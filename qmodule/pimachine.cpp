@@ -4,7 +4,6 @@
 #include <QEventLoop>
 #include "pimachine.h"
 #include "stringtransition.h"
-#include <QTextStream>  // TODO: Remove after debug
 
 const int PIMachine::msTimeout = 10;
 
@@ -13,8 +12,8 @@ PIMachine::PIMachine(const int _id, QObject *_parent):
   m_id (_id)
 {
   buildMachine();
-  connect(this, &PIMachine::stopped, this, &PIMachine::on_stop);
-  connect(this, &PIMachine::started, this, &PIMachine::on_start);
+  connect(this, &PIMachine::stopped, this, &PIMachine::onStop);
+  connect(this, &PIMachine::started, this, &PIMachine::onStart);
 }
 
 void PIMachine::buildMachine()
@@ -48,6 +47,7 @@ void PIMachine::buildMachine()
   StringTransition *t3 = new StringTransition(this, m_id, "deactivation_started");
   StringTransition *t4 = new StringTransition(this, m_id, "deactivation_completed");
   StringTransition *t5 = new StringTransition(this, m_id, "payment_failed");
+  StringTransition *t5_1 = new StringTransition(this, m_id, "payment_failed");
   StringTransition *t6 = new StringTransition(this, m_id, "payment_processed");
   StringTransition *t7 = new StringTransition(this, m_id, "activation_completed");
 
@@ -65,7 +65,9 @@ void PIMachine::buildMachine()
 
   t5->setTargetState(suspended);
   active->addTransition(t5);
-  activeTrial->addTransition(t5);
+
+  t5_1->setTargetState(suspended);
+  activeTrial->addTransition(t5_1);
 
   t6->setTargetState(active);
   suspended->addTransition(t6);
@@ -74,12 +76,12 @@ void PIMachine::buildMachine()
   pendingActivate->addTransition(t7);
 
   setInitialState(pendingActivate);
+  qDebug() << "[" << id() << "]PIMachine::buildMachine completed";
 }
 
 QString PIMachine::externalEventProcess(const QString &eventType)
 {
-  QTextStream cout(stdout);
-  cout << "[" << id() << "]PIMachine::externalEventProcess start\n";
+  qDebug() << "[" << id() << "]PIMachine::externalEventProcess start\n";
   QTimer timer;
   timer.setSingleShot(true);
   QEventLoop loop;
@@ -99,43 +101,40 @@ QString PIMachine::externalEventProcess(const QString &eventType)
 
 QString PIMachine::init(const QString &stateName)
 {
-  QTextStream cout(stdout);
-  cout << "[" << id() << "]PIMachine::init start: " << stateName << "\n";
+  qDebug() << "[" << id() << "]PIMachine::init start: " << stateName << "\n";
   QTimer timer;
   timer.setSingleShot(true);
   QEventLoop loop;
-  connect(this, &PIMachine::on_stop, &loop, &QEventLoop::quit);
-  connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
   setInitialState(states[stateName]);
+  connect(this, &PIMachine::onStop, &loop, &QEventLoop::quit);
+  connect(&timer, &QTimer::timeout, &loop, &QEventLoop::quit);
+  connect(this, &PIMachine::onStart, &loop, &QEventLoop::quit);
   timer.start(msTimeout);
   stop();
   loop.exec();
   if(timer.isActive()) {
-    qDebug("Wait for stop failed");
+    qDebug() << "[" << id() << "]PIMachine stop failed. isRunning()=" << isRunning() << Qt::endl;
     return QString("");
   }
-  else
-    qDebug("machine stopped");
   timer.start(msTimeout);
   start();
   loop.exec();
   if(timer.isActive()) {
-    qDebug("Wait for start failed");
+    qDebug() << "[" << id() << "]PIMachine start failed. isRunning()=" << isRunning() << Qt::endl;
     return QString("");
   }
-  else
-    qDebug("machine started");
+  qDebug() << "[" << id() << "]PIMachine::init completed";
   return property("state").toString();
 }
 
-void PIMachine::on_start()
+void PIMachine::onStart()
 {
-  QTextStream cout(stdout);
-  cout << "[" << id() << "]PIMachine::on_start\n";
+  qDebug() << "[" << id() << "] PIMashine started" << Qt::endl;
+  emit hasStarted();
 }
 
-void PIMachine::on_stop()
+void PIMachine::onStop()
 {
-  QTextStream cout(stdout);
-  cout << "[" << id() << "]PIMachine::on_stop\n";
+  qDebug() << "[" << id() << "] PIMashine stopped" << Qt::endl;
+  emit hasStopped();
 }

@@ -1,5 +1,6 @@
 #ifndef PIMACHINE_H
 #define PIMACHINE_H
+#include <QDebug>
 #include <QStateMachine>
 
 class PIMachine: public QStateMachine
@@ -16,10 +17,12 @@ public:
   int id() { return m_id; }
 signals:
   void externalSignal(const QString &eventType);
+  void hasStopped();
+  void hasStarted();
 public slots:
   QString externalEventProcess(const QString &eventType);
   QString init(const QString &stateName);
-  void on_stop();
-  void on_start();
+  void onStart();
+  void onStop();
 };
 #endif // PIMACHINE_H
