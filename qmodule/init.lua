@@ -56,10 +56,19 @@ local function new()
   return machine
 end
 
+local function stop()
+  log.info("stop called")
+  local res, m = qfsmlib.stop()
+  log.info("stop result: %s", res)
+  if not res then return nil, m end
+  return true
+end
+
 --
 -- Exported functions
 --
 return {
     new = new,
+    stop = stop,
     qfsmlib = qfsmlib,
 }

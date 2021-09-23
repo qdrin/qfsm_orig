@@ -6,13 +6,15 @@ class PIMachine: public QStateMachine
 {
     Q_OBJECT
 private:
+    const int m_id;
     QObject *m_parent;
     void buildMachine();
 public:
-    PIMachine(QObject *_parent = nullptr);
+    PIMachine(const int _id, QObject *_parent = nullptr);
+    int id() { return m_id; }
 signals:
-    void externalSignal(QString eventType);
+    void externalSignal(const int id, const QString &eventType);
 public slots:
-    void externalEventProcess(QString eventType);
+    void externalEventProcess(const int id, const QString &eventType);
 };
 #endif // PIMACHINE_H

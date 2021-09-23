@@ -2,8 +2,9 @@
 #include "pimachine.h"
 #include "stringtransition.h"
 
-PIMachine::PIMachine(QObject *_parent):
-    m_parent(_parent)
+PIMachine::PIMachine(const int _id, QObject *_parent):
+    m_parent(_parent),
+    m_id (_id)
 {
     buildMachine();
 }
@@ -23,10 +24,10 @@ void PIMachine::buildMachine()
     // QFinalState *sFinal = new QFinalState(m_machine);
     setProperty("state", "UNDEFINED");
 
-    StringTransition *t1 = new StringTransition(this, "trial_activation_completed");
-    StringTransition *t2 = new StringTransition(this, "activation_aborted");
-    StringTransition *t3 = new StringTransition(this, "deactivation_started");
-    StringTransition *t4 = new StringTransition(this, "deactivation_completed");
+    StringTransition *t1 = new StringTransition(this, m_id, "trial_activation_completed");
+    StringTransition *t2 = new StringTransition(this, m_id, "activation_aborted");
+    StringTransition *t3 = new StringTransition(this, m_id, "deactivation_started");
+    StringTransition *t4 = new StringTransition(this, m_id, "deactivation_completed");
 
     t1->setTargetState(activeTrial);
     pendingActivate->addTransition(t1);
@@ -43,8 +44,8 @@ void PIMachine::buildMachine()
     setInitialState(pendingActivate);
 }
 
-void PIMachine::externalEventProcess(QString eventType)
+void PIMachine::externalEventProcess(const int id, const QString &eventType)
 {
-    emit externalSignal(eventType);
+    emit externalSignal(id, eventType);
 }
 

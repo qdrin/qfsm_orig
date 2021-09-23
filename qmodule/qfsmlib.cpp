@@ -8,6 +8,7 @@
 
 using namespace std;
 static const char module_label[] = "__qfsm_driver";
+static StateMachineController controller;
 
 /* internal function */
 static int luaPismInit(struct lua_State *L)
@@ -27,6 +28,9 @@ static int luaPismClose(struct lua_State *L)
 static int luaPismSendEvent(struct lua_State *L)
 {
   cout << "luaPismSendEvent called\n";
+  int id = lua_tointeger(L, -1);
+  cout << "id=" << id << endl;
+  // controller.sendEvent(id, "activation_aborted");
   lua_pushinteger(L, 1);
   lua_pushstring(L, "luaPismSendEvent");
 	return 2; /* one return value */
@@ -43,15 +47,21 @@ static int luaPismGet(struct lua_State *L)
 static int new_machine(struct lua_State *L)
 {
   cout << "new_machine called\n";
-  PIMachine *machine = new PIMachine(nullptr);
   lua_pushinteger(L, 1);
-  PIMachine **m = (PIMachine **)
-    lua_newuserdata(L, sizeof(machine));
-  *m = machine;
-  cout << "machine address: " << *m << endl;
+  int machine_id = controller.newMachine();
+  cout << "new_machine id=" << machine_id << endl;
+  lua_pushinteger(L, machine_id);
   luaL_getmetatable(L, module_label);
   lua_setmetatable(L, -2);
 	return 2; /* one return value */
+}
+
+static int stop_machine(struct lua_State *L)
+{
+  cout << "stop_machine called\n";
+  controller.stop();
+  lua_pushinteger(L, 1);
+	return 1; /* one return value */
 }
 
 /* exported function */
@@ -75,6 +85,7 @@ LUA_API "C" int luaopen_qmodule_qfsmlib(lua_State *L)
   lua_newtable(L);
 	static const struct luaL_Reg meta [] = {
 		{ "new", new_machine },
+    { "stop", stop_machine },
 		{NULL, NULL}
 	};
 	luaL_register(L, NULL, meta);

@@ -18,14 +18,14 @@ private:
   bool m_isRunning;
 public:
   StateMachineController(): StateMachineController(1) {};
-  StateMachineController(int _maxMachines): maxMachines(_maxMachines), m_isRunning(false) {};
+  StateMachineController(int _maxMachines): maxMachines(_maxMachines), m_isRunning(false) { run(); };
   ~StateMachineController();
   int newMachine();
 signals:
   void finished();
-  void externalEvent(const QString &);
+  void externalEvent(const int id, const QString &);
 public slots:
   void stop() {m_isRunning = false; };
-  void sendEvent(const QString &ev);
+  void sendEvent(const int id, const QString &ev);
   void run();
 };
