@@ -6,17 +6,20 @@ class PIMachine: public QStateMachine
 {
     Q_OBJECT
 private:
-    QHash<QString, QState*> states;
-    const int m_id;
-    QObject *m_parent;
-    void buildMachine();
+  static const int msTimeout;
+  QHash<QString, QState*> states;
+  const int m_id;
+  QObject *m_parent;
+  void buildMachine();
 public:
-    PIMachine(const int _id, QObject *_parent = nullptr);
-    int id() { return m_id; }
+  PIMachine(const int _id, QObject *_parent = nullptr);
+  int id() { return m_id; }
 signals:
-    void externalSignal(const QString &eventType);
+  void externalSignal(const QString &eventType);
 public slots:
-    QString externalEventProcess(const QString &eventType);
-    QString init(const QString &stateName);
+  QString externalEventProcess(const QString &eventType);
+  QString init(const QString &stateName);
+  void on_stop();
+  void on_start();
 };
 #endif // PIMACHINE_H
