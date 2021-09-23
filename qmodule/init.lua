@@ -18,8 +18,9 @@ local qfsmlib = require('qmodule.qfsmlib')
 
 local machine_mt = {
   __index = {
-    send_event = function(self)
-      local status, res = self.conn:send_event()
+    send_event = function(self, event_type)
+      log.info("send_event started for conn=%s", self.conn)
+      local status, res = self.conn:send_event(self.conn, event_type)
       if status < 0 then return nil, res end
       return res
     end,
@@ -28,11 +29,11 @@ local machine_mt = {
       if res < 0 then return nil, error end
       return res
     end,
-    init = function(self)
+    init = function(self, state)
       log.info("machine.init call function %s", self.conn.init)
-      local res, error = self.conn:init()
-      if res < 0 then return nil, error end
-      return res
+      local res, new_state = self.conn:init(state)
+      if res < 0 then return nil, new_state end
+      return new_state
     end,
     get = function(self)
       log.info("machine.init call function %s", self.conn.init)
@@ -48,11 +49,9 @@ local function new()
   local res, m = qfsmlib.new()
   log.info("new result=%s", res)
   if res < 0 then return nil, m end
-  log.warn(m)
   local machine = setmetatable({
     conn = m,
 }, machine_mt)
-  log.info(machine)
   return machine
 end
 

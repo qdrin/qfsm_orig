@@ -1,4 +1,5 @@
 #include "stringtransition.h"
+#include <QTextStream>  // TODO: Remove after debug
 
 StringTransition::StringTransition(QObject *sender, const int _machineId, const QString& _value):
     QSignalTransition(sender, SIGNAL(externalSignal(QString))),
@@ -9,10 +10,12 @@ StringTransition::StringTransition(QObject *sender, const int _machineId, const 
 
 bool StringTransition::eventTest(QEvent *e)
 {
-    if (!QSignalTransition::eventTest(e))
-        return false;
-    QStateMachine::SignalEvent *se = static_cast<QStateMachine::SignalEvent*>(e);
-    return (m_value == se->arguments().at(1) && machineId == se->arguments().at(0));
+  QTextStream cout(stdout);
+  cout << "StringTransition::eventTest called\n";
+  if (!QSignalTransition::eventTest(e))
+      return false;
+  QStateMachine::SignalEvent *se = static_cast<QStateMachine::SignalEvent*>(e);
+  return (m_value == se->arguments().at(0));
 }
 
 void StringTransition::onTransition(QEvent *e) {

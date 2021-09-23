@@ -9,7 +9,7 @@ struct MachineData {
   PIMachine* machine;
 };
 
-class StateMachineController: public QObject
+class StateMachineController: public QThread
 {
   Q_OBJECT
 private:
@@ -18,14 +18,17 @@ private:
   bool m_isRunning;
 public:
   StateMachineController(): StateMachineController(1) {};
-  StateMachineController(int _maxMachines): maxMachines(_maxMachines), m_isRunning(false) { run(); };
+  StateMachineController(int _maxMachines);
   ~StateMachineController();
   int newMachine();
 signals:
   void finished();
-  void externalEvent(const int id, const QString &);
+  void externalEvent(const QString &);
 public slots:
+  QString getMachineState(const int id);
   void stop() {m_isRunning = false; };
-  void sendEvent(const int id, const QString &ev);
+  QString sendEvent(const int id, const QString &ev);
+  void stopMachine(const int id);
+  QString initMachine(const int id, const QString &state);
   void run();
 };
