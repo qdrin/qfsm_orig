@@ -9,7 +9,8 @@ const int PIMachine::msTimeout = 10;
 
 PIMachine::PIMachine(const int _id, QObject *_parent):
   m_parent(_parent),
-  m_id (_id)
+  m_id (_id),
+  busy (false)
 {
   buildMachine();
   connect(this, &PIMachine::stopped, this, &PIMachine::onStop);
@@ -46,6 +47,7 @@ void PIMachine::buildMachine()
   StringTransition *t1 = new StringTransition(this, m_id, "trial_activation_completed");
   StringTransition *t2 = new StringTransition(this, m_id, "activation_aborted");
   StringTransition *t3 = new StringTransition(this, m_id, "deactivation_started");
+  StringTransition *t3_1 = new StringTransition(this, m_id, "deactivation_started");
   StringTransition *t4 = new StringTransition(this, m_id, "deactivation_completed");
   StringTransition *t5 = new StringTransition(this, m_id, "payment_failed");
   StringTransition *t5_1 = new StringTransition(this, m_id, "payment_failed");
@@ -63,6 +65,8 @@ void PIMachine::buildMachine()
 
   t3->setTargetState(pendingDisconnect);
   activeTrial->addTransition(t3);
+  t3_1->setTargetState(pendingDisconnect);
+  active->addTransition(t3_1);
 
   t4->setTargetState(disconnect);
   pendingDisconnect->addTransition(t4);
@@ -112,6 +116,8 @@ QString PIMachine::externalEventProcess(const QString &eventType)
 QString PIMachine::init(const QString &stateName)
 {
   qDebug() << "[" << id() << "]PIMachine::init start: " << stateName << "\n";
+  busy = true;
+  emit occupied();
   QTimer timer;
   timer.setSingleShot(true);
   QEventLoop loop;
