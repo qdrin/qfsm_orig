@@ -25,13 +25,9 @@ void PIMachine::buildMachine()
   QState *pendingDisconnect = new QState(this);
   QState *disconnect = new QState(this);
   QState *suspended = new QState(this);
-  pendingActivate->assignProperty(this, "state", "PENDING_ACTIVATE");
-  aborted->assignProperty(this, "state", "ABORTED");
-  activeTrial->assignProperty(this, "state", "ACTIVE_TRIAL");
-  active->assignProperty(this, "state", "ACTIVE");
-  pendingDisconnect->assignProperty(this, "state", "PENDING_DISCONNECT");
-  disconnect->assignProperty(this, "state", "DISCONNECT");
-  suspended->assignProperty(this, "state", "SUSPENDED");
+  QState *suspending = new QState(this);
+  QState *prolongation = new QState(this);
+
   // QFinalState *sFinal = new QFinalState(m_machine);
   setProperty("state", "UNDEFINED");
   states["PENDING_ACTIVATE"] = pendingActivate;
@@ -39,8 +35,13 @@ void PIMachine::buildMachine()
   states["ACTIVE_TRIAL"] = activeTrial;
   states["ACTIVE"] = active;
   states["SUSPENDED"] = suspended;
+  states["SUSPENDING"] = suspending;
+  states["PROLONGATION"] = prolongation;
   states["PENDING_DISCONNECT"] = pendingDisconnect;
   states["DISCONNECT"] = disconnect;
+
+  for(QHash<QString, QState*>::iterator p=states.begin(); p != states.end(); p++)
+    p.value()->assignProperty(this, "state", p.key());
 
   StringTransition *t1 = new StringTransition(this, m_id, "trial_activation_completed");
   StringTransition *t2 = new StringTransition(this, m_id, "activation_aborted");
@@ -50,6 +51,9 @@ void PIMachine::buildMachine()
   StringTransition *t5_1 = new StringTransition(this, m_id, "payment_failed");
   StringTransition *t6 = new StringTransition(this, m_id, "payment_processed");
   StringTransition *t7 = new StringTransition(this, m_id, "activation_completed");
+  StringTransition *t8 = new StringTransition(this, m_id, "suspend_processed");
+  StringTransition *t9 = new StringTransition(this, m_id, "prolong_processed");
+
 
   t1->setTargetState(activeTrial);
   pendingActivate->addTransition(t1);
@@ -63,17 +67,23 @@ void PIMachine::buildMachine()
   t4->setTargetState(disconnect);
   pendingDisconnect->addTransition(t4);
 
-  t5->setTargetState(suspended);
+  t5->setTargetState(suspending);
   active->addTransition(t5);
 
-  t5_1->setTargetState(suspended);
+  t5_1->setTargetState(suspending);
   activeTrial->addTransition(t5_1);
 
-  t6->setTargetState(active);
+  t6->setTargetState(prolongation);
   suspended->addTransition(t6);
 
   t7->setTargetState(active);
   pendingActivate->addTransition(t7);
+
+  t8->setTargetState(suspended);
+  suspending->addTransition(t8);
+
+  t9->setTargetState(active);
+  prolongation->addTransition(t9);
 
   setInitialState(pendingActivate);
   qDebug() << "[" << id() << "]PIMachine::buildMachine completed";
