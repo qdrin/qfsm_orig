@@ -127,6 +127,7 @@ QString PIMachine::init(const QString &stateName)
   connect(this, &PIMachine::onStart, &loop, &QEventLoop::quit);
   timer.start(msTimeout);
   stop();
+  qDebug() << "stopping...";
   loop.exec();
   if(timer.isActive()) {
     qDebug() << "[" << id() << "]PIMachine stop failed. isRunning()=" << isRunning() << Qt::endl;
@@ -134,6 +135,7 @@ QString PIMachine::init(const QString &stateName)
   }
   timer.start(msTimeout);
   start();
+  qDebug() << "starting...";
   loop.exec();
   if(timer.isActive()) {
     qDebug() << "[" << id() << "]PIMachine start failed. isRunning()=" << isRunning() << Qt::endl;

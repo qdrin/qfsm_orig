@@ -19,25 +19,35 @@ local qfsmlib = require('qmodule.qfsmlib')
 local machine_mt = {
   __index = {
     send_event = function(self, event_type)
-      log.info("send_event started for conn=%s", self.conn)
+      local status, res = self.conn:is_running()
+      if not res then return nil, string.format("machine %s is not running", self.conn) end
       local status, res = self.conn:send_event(self.conn, event_type)
       if status < 0 then return nil, res end
       return res
     end,
     close = function(self)
+      local status, res = self.conn:is_running()
+      if not res then return nil, string.format("machine %s is not running", self.conn) end
       local res, error = self.conn:close()
       if res < 0 then return nil, error end
       return res
     end,
     init = function(self, state)
-      log.info("machine.init call function %s", self.conn.init)
+      local status, res = self.conn:is_running()
+      if not res then return nil, string.format("machine %s is not running", self.conn) end
       local res, new_state = self.conn:init(state)
       if res < 0 then return nil, new_state end
       return new_state
     end,
     get = function(self)
-      log.info("machine.init call function %s", self.conn.init)
-      local status, res = self.conn:get()
+      local status, res = self.conn:is_running()
+      if not res then return nil, string.format("machine %s is not running", self.conn) end
+      status, res = self.conn:get()
+      if status < 0 then return nil, res end
+      return res
+    end,
+    is_running = function(self)
+      local status, res = self.conn:is_running()
       if status < 0 then return nil, res end
       return res
     end,

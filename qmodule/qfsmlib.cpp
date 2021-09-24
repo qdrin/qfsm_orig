@@ -61,12 +61,21 @@ static int luaPismSendEvent(struct lua_State *L)
 
 static int luaPismGet(struct lua_State *L)
 {
-  cout << "luaPismGet called\n";
   int id = lua_tointeger(L, -1);
-  cout << "luaPismGet called with id=" << id << "\n";
+  qDebug() << "luaPismGet called with id=" << id << "\n";
   QString res = controller->getMachineState(id);
   lua_pushinteger(L, 1);
   lua_pushstring(L, res.toStdString().c_str());
+	return 2; /* one return value */
+}
+
+static int luaPismIsRunning(struct lua_State *L)
+{
+  int id = lua_tointeger(L, -1);
+  qDebug() << "luaPismIsRunning called with id=" << id << "\n";
+  bool res = controller->isRunning(id);
+  lua_pushinteger(L, 1);
+  lua_pushboolean(L, res);
 	return 2; /* one return value */
 }
 
@@ -106,6 +115,7 @@ LUA_API "C" int luaopen_qmodule_qfsmlib(lua_State *L)
 		{ "init", luaPismInit },
     { "send_event", luaPismSendEvent },
     { "get", luaPismGet },
+    { "is_running", luaPismIsRunning },
     { "close", luaPismClose },
 		{NULL, NULL}
 	};

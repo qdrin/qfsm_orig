@@ -63,6 +63,7 @@ void StateMachineController::stopMachine(const int id)
   qDebug() << "StateMachineController::stopMachine[" << id << "]\n";
   machines[id]->machine->stop();
   // delete machines[id]->machine;
+  machines[id]->thread->exit();
   machines[id]->thread->deleteLater();
   machines.remove(id);
 }
@@ -71,4 +72,9 @@ QString StateMachineController::initMachine(const int id, const QString &state)
 {
   qDebug() << "StateMachineController::initMachine[" << id << "]: " << state << "\n";
   return machines[id]->machine->init(state);
+}
+
+bool StateMachineController::isRunning(const int id)
+{
+  return machines[id]->machine->isRunning();
 }

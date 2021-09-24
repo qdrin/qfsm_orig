@@ -31,5 +31,6 @@ public slots:
   QString sendEvent(const int id, const QString &ev);
   void stopMachine(const int id);
   QString initMachine(const int id, const QString &state);
+  bool isRunning(const int id);
   void run();
 };
