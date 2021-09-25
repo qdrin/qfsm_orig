@@ -12,10 +12,10 @@ bool StringTransition::eventTest(QEvent *e)
   if (!QSignalTransition::eventTest(e))
       return false;
   QStateMachine::SignalEvent *se = static_cast<QStateMachine::SignalEvent*>(e);
-  // qDebug() << "StringTransition::eventTest called\n";
+  // qDebug() << "StringTransition::eventTest called";
   return (m_value == se->arguments().at(0));
 }
 
 void StringTransition::onTransition(QEvent *e) {
-  qDebug() << "StringTransition::onTransition called, machine state\n";
+  // qDebug() << "StringTransition::onTransition called, machine state";
 }

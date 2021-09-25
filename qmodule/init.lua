@@ -13,14 +13,18 @@ local qfsmlib = require('qmodule.qfsmlib')
 -- Now you can use exported CPP functions from 'qmodule/qfsmlib.c' submodule in your code
 local machines = {}
 local callbacks = {
-  suspend=function(id)
-    local productId = machines[id].productId
-    log.info("'suspend' callback start. id=%s, productId=%s", id, productId)
+  suspend=function(productId)
+    log.info("callback 'suspend' start. productId=%s", productId)
   end,
-  prolong=function(id)
-    log.info("'prolong' callback start. id=%s", id)
+  prolong=function(productId)
+    log.info("callback 'prolong' start. productId=%s", productId)
   end,
 }
+
+local function callback_func(id, cb_name)
+  local productId = machines[id].productId
+  callbacks[cb_name](productId)
+end
 
 local machine_mt = {
   __index = {
@@ -62,15 +66,6 @@ local machine_mt = {
   }
 }
 
-local function set_callbacks(custom_callbacks)
-  callbacks = custom_callbacks or callbacks
-  log.info("qmodule.set_callbacks start")
-  local res, m = qfsmlib.set_callbacks(callbacks)
-  if res < 0 then return nil, m end
-  log.info("qmodule.set_callbacks finished: %s", res)
-  return res
-end
-
 local function new(custom_cbfunc)
   log.info("new called")
   local res, m = qfsmlib.new()
@@ -91,13 +86,15 @@ local function stop()
   return true
 end
 
---
--- Exported functions
---
+local function init(conf)
+  callbacks = conf.callbacks or callbacks
+end
+
+qfsmlib.init({callback_func = callback_func})
 return {
-    set_callbacks = set_callbacks,
-    new = new,
-    stop = stop,
-    qfsmlib = qfsmlib,
-    callbacks = callbacks,
+  init = init,
+  new = new,
+  stop = stop,
+  qfsmlib = qfsmlib,
+  callbacks = callbacks,
 }

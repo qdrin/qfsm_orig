@@ -11,9 +11,9 @@ struct MachineData {
   PIMachine* machine;
 };
 
-struct CallbackCollection {
+struct LuaConfig {
   lua_State *lState;
-  int callbacks;
+  int config;
 };
 
 class StateMachineController: public QThread
@@ -23,13 +23,13 @@ private:
   QVector<MachineData*> machines;
   int maxMachines;
   bool m_isRunning;
-  CallbackCollection callbacks;
+  LuaConfig lConfig;
 public:
   StateMachineController(): StateMachineController(1) {};
   StateMachineController(int _maxMachines);
   ~StateMachineController();
   int newMachine();
-  void setCallbacks(lua_State *L);
+  void init(lua_State *L);
 signals:
   void finished();
   void externalEvent(const QString &);

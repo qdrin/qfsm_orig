@@ -5,13 +5,13 @@
 StateMachineController::StateMachineController(int _maxMachines):
  maxMachines(_maxMachines), m_isRunning(false)
 {
-  qDebug() << "stateMachineController::stateMachineController\n";
+  qDebug() << "stateMachineController::stateMachineController";
   start();
 }
 
 StateMachineController::~StateMachineController()
 {
-  qDebug() << "stateMachineController::~StateMachineController\n";
+  qDebug() << "stateMachineController::~StateMachineController";
   for( MachineData **m=machines.begin(); m < machines.end(); m++ )
   {
     (*m)->machine->stop();
@@ -22,7 +22,7 @@ StateMachineController::~StateMachineController()
 
 int StateMachineController::newMachine()
 {
-  // qDebug() << "stateMachineController::newMachine\n";
+  // qDebug() << "stateMachineController::newMachine";
   if(machines.count() >= maxMachines) return -1; 
   MachineData *md = new MachineData();
   md->id = machines.count();  //TODO: Remove id from MachineData or from PIMachine ???
@@ -33,47 +33,48 @@ int StateMachineController::newMachine()
   connect(md->machine, &PIMachine::sendCallback, this, &StateMachineController::onSendCallback);
   md->thread->start();
   md->machine->start();
-  qDebug() << "stateMachineController::newMachine: new machine started. id=" << md->id << ", thread=" << md->thread << Qt::endl;
+  qDebug() << "stateMachineController::newMachine: new machine started. id=" << md->id << ", thread=" << md->thread;
   return md->id;
 }
 
 QString StateMachineController::sendEvent(const int id, const QString &ev)
 {
-  qDebug() << "stateMachineController::sendEvent(" << id << ", " << ev << ")\n";
+  qDebug() << "stateMachineController::sendEvent(" << id << ", " << ev << ")";
   return machines[id]->machine->externalEventProcess(ev);
 }
 
 void StateMachineController::onSendCallback(const int id, QString cbName)
 {
-  qDebug() << "StateMachineController::onSendCallback("<< id << ", " << cbName << ") called\n";
-  lua_rawgeti(callbacks.lState, LUA_REGISTRYINDEX, callbacks.callbacks);
-  lua_getfield(callbacks.lState, -1, cbName.toStdString().c_str());
-  if(! lua_isfunction(callbacks.lState, -1)) {
-    qDebug() << "StateMachineController::onSendCallback cannot find '" << cbName << "' callback\n";
+  qDebug() << "StateMachineController::onSendCallback("<< id << ", " << cbName << ") called";
+  lua_rawgeti(lConfig.lState, LUA_REGISTRYINDEX, lConfig.config);
+  lua_getfield(lConfig.lState, -1, "callback_func");
+  if(! lua_isfunction(lConfig.lState, -1)) {
+    qDebug() << "StateMachineController::onSendCallback cannot find callback";
     return;
   }  
-  lua_pushinteger(callbacks.lState, id);
-  lua_pcall(callbacks.lState, 1,0,0);
+  lua_pushinteger(lConfig.lState, id);
+  lua_pushstring(lConfig.lState, cbName.toStdString().c_str());
+  lua_pcall(lConfig.lState, 2,0,0);
 }
 
 void StateMachineController::run()
 {
   int argC = 0;
   QCoreApplication app(argC, nullptr);
-  qDebug() << "StateMachineController::run() started\n";
+  qDebug() << "StateMachineController::run() started";
   m_isRunning = true;
   app.exec();
 }
 
 QString StateMachineController::getMachineState(const int id)
 {
-  qDebug() << "StateMachineController::getMachineState\n";
+  qDebug() << "StateMachineController::getMachineState";
   return machines[id]->machine->property("state").toString();
 }
 
 void StateMachineController::stopMachine(const int id)
 {
-  qDebug() << "StateMachineController::stopMachine[" << id << "]\n";
+  qDebug() << "StateMachineController::stopMachine[" << id << "]";
   machines[id]->machine->stop();
   // delete machines[id]->machine;
   machines[id]->thread->exit();
@@ -83,7 +84,6 @@ void StateMachineController::stopMachine(const int id)
 
 QString StateMachineController::initMachine(const int id, const QString &state)
 {
-  qDebug() << "StateMachineController::initMachine[" << id << "]: " << state << "\n";
   return machines[id]->machine->init(state);
 }
 
@@ -92,13 +92,12 @@ bool StateMachineController::isRunning(const int id)
   return machines[id]->machine->isRunning();
 }
 
-void StateMachineController::setCallbacks(lua_State *L)
+void StateMachineController::init(lua_State *L)
 {
-  qDebug() << "StateMachineController::setCallbacks called\n";
-  callbacks.lState = L;
-  qDebug() << "LUA_REGISTRYINDEX" << LUA_REGISTRYINDEX << Qt::endl;
+  qDebug() << "StateMachineController::init called";
+  lConfig.lState = L;
   int rid;
   rid = luaL_ref(L, LUA_REGISTRYINDEX);
-  callbacks.callbacks = rid;
-  qDebug() << "StateMachineController::setCallbacks finished\n";
+  lConfig.config = rid;
+  qDebug() << "StateMachineController::setCallback finished";
 }

@@ -26,7 +26,6 @@ static int luaPismInit(struct lua_State *L)
   }
   int id = lua_tointeger(L, -2);
   const char* state = lua_tostring(L, -1);
-  qDebug() << "luaPismSendEvent: id=" << id << ", state: " << state << Qt::endl;
   QString result = controller->initMachine(id, state);
   lua_pushinteger(L, 1);
   lua_pushstring(L, result.toStdString().c_str());
@@ -35,7 +34,7 @@ static int luaPismInit(struct lua_State *L)
 
 static int luaPismClose(struct lua_State *L)
 {
-  qDebug() << "luaPismClose called\n";
+  qDebug() << "luaPismClose called";
   int id = lua_tointeger(L, -1);
   controller->stopMachine(id);
   lua_pushinteger(L, 1);
@@ -52,7 +51,7 @@ static int luaPismSendEvent(struct lua_State *L)
   }
   int id = lua_tointeger(L, -2);
   const char* ev = lua_tostring(L, -1);
-  qDebug() << "luaPismSendEvent: id=" << id << ", event: " << ev << Qt::endl;
+  qDebug() << "luaPismSendEvent: id=" << id << ", event: " << ev;
   QString result = controller->sendEvent(id, ev);
   lua_pushinteger(L, 1);
   lua_pushstring(L, result.toStdString().c_str());
@@ -62,7 +61,7 @@ static int luaPismSendEvent(struct lua_State *L)
 static int luaPismGet(struct lua_State *L)
 {
   int id = lua_tointeger(L, -1);
-  qDebug() << "luaPismGet called with id=" << id << "\n";
+  qDebug() << "luaPismGet called with id=" << id;
   QString res = controller->getMachineState(id);
   lua_pushinteger(L, 1);
   lua_pushstring(L, res.toStdString().c_str());
@@ -72,32 +71,32 @@ static int luaPismGet(struct lua_State *L)
 static int luaPismIsRunning(struct lua_State *L)
 {
   int id = lua_tointeger(L, -1);
-  qDebug() << "luaPismIsRunning called with id=" << id << "\n";
+  // qDebug() << "luaPismIsRunning called with id=" << id;
   bool res = controller->isRunning(id);
   lua_pushinteger(L, 1);
   lua_pushboolean(L, res);
 	return 2; /* one return value */
 }
 
-static int set_callbacks(struct lua_State *L)
+static int init(struct lua_State *L)
 {
-  qDebug() << "qfsmlib.set_callback called\n";
+  qDebug() << "qfsmlib.init called";
   if(! lua_istable(L, -1)) {
-    qDebug() << "qfsmlib.set_callbacks: argument must be a table\n";
+    qDebug() << "qfsmlib.init: argument must be a table";
     lua_pushinteger(L, -1);
-    lua_pushstring(L, "qfsmlib.set_callbacks: argument must be a table");
+    lua_pushstring(L, "qfsmlib.init: argument must be a table");
     return 2;
   }
-  controller->setCallbacks(L);
+  controller->init(L);
   lua_pushinteger(L, 1);
   return 1;
 }
 static int new_machine(struct lua_State *L)
 {
-  qDebug() << "qfsmlib.new_machine called\n";
+  qDebug() << "qfsmlib.new_machine called";
   lua_pushinteger(L, 1);
   int machine_id = controller->newMachine();
-  qDebug() << "new_machine id=" << machine_id << Qt::endl;
+  qDebug() << "new_machine id=" << machine_id;
   int num_of_result = 2;
   lua_pushinteger(L, machine_id);
   if(machine_id >= 0) {
@@ -112,7 +111,7 @@ static int new_machine(struct lua_State *L)
 
 static int stop_machine(struct lua_State *L)
 {
-  qDebug() << "stop_machine called\n";
+  qDebug() << "stop_machine called";
   controller->stop();
   lua_pushinteger(L, 1);
 	return 1; /* one return value */
@@ -143,7 +142,7 @@ LUA_API "C" int luaopen_qmodule_qfsmlib(lua_State *L)
   lua_newtable(L);
 	static const struct luaL_Reg meta [] = {
 		{ "new", new_machine },
-    { "set_callbacks", set_callbacks },
+    { "init", init },
     { "stop", stop_machine },
 		{NULL, NULL}
 	};

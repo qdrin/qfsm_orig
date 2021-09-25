@@ -96,7 +96,6 @@ void PIMachine::buildMachine()
 
 QString PIMachine::externalEventProcess(const QString &eventType)
 {
-  qDebug() << "[" << id() << "]PIMachine::externalEventProcess start\n";
   QTimer timer;
   timer.setSingleShot(true);
   QEventLoop loop;
@@ -109,14 +108,11 @@ QString PIMachine::externalEventProcess(const QString &eventType)
     qDebug() << "[" << id() << "]PIMachine::externalEventProcess wait for state change failed";
     return QString("");
   }
-  else
-    qDebug() << "[" << id() << "]PIMachine::externalEventProcess event processed";
   return property("state").toString();
 }
 
 QString PIMachine::init(const QString &stateName)
 {
-  qDebug() << "[" << id() << "]PIMachine::init start: " << stateName << "\n";
   busy = true;
   emit occupied();
   QTimer timer;
@@ -128,7 +124,6 @@ QString PIMachine::init(const QString &stateName)
   connect(this, &PIMachine::onStart, &loop, &QEventLoop::quit);
   timer.start(msTimeout);
   stop();
-  qDebug() << "stopping...";
   loop.exec();
   if(timer.isActive()) {
     qDebug() << "[" << id() << "]PIMachine stop failed. isRunning()=" << isRunning() << Qt::endl;
@@ -136,7 +131,6 @@ QString PIMachine::init(const QString &stateName)
   }
   timer.start(msTimeout);
   start();
-  qDebug() << "starting...";
   loop.exec();
   if(timer.isActive()) {
     qDebug() << "[" << id() << "]PIMachine start failed. isRunning()=" << isRunning() << Qt::endl;
@@ -148,12 +142,12 @@ QString PIMachine::init(const QString &stateName)
 
 void PIMachine::onStart()
 {
-  qDebug() << "[" << id() << "] PIMashine started" << Qt::endl;
+  // qDebug() << "[" << id() << "] PIMashine started" << Qt::endl;
   emit hasStarted();
 }
 
 void PIMachine::onStop()
 {
-  qDebug() << "[" << id() << "] PIMashine stopped" << Qt::endl;
+  // qDebug() << "[" << id() << "] PIMashine stopped" << Qt::endl;
   emit hasStopped();
 }
