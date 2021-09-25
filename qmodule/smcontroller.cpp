@@ -46,11 +46,12 @@ QString StateMachineController::sendEvent(const int id, const QString &ev)
 void StateMachineController::onSendCallback(const int id, QString cbName)
 {
   qDebug() << "StateMachineController::onSendCallback("<< id << ", " << cbName << ") called\n";
-  const char* key;
-  qDebug() << "pushing" << callbacks.callbacks << "ref\n";
   lua_rawgeti(callbacks.lState, LUA_REGISTRYINDEX, callbacks.callbacks);
-  if(lua_istable(callbacks.lState, -1)) qDebug() << "callback is table\n";
   lua_getfield(callbacks.lState, -1, cbName.toStdString().c_str());
+  if(! lua_isfunction(callbacks.lState, -1)) {
+    qDebug() << "StateMachineController::onSendCallback cannot find '" << cbName << "' callback\n";
+    return;
+  }  
   lua_pushinteger(callbacks.lState, id);
   lua_pcall(callbacks.lState, 1,0,0);
 }
