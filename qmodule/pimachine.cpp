@@ -4,6 +4,7 @@
 #include <QEventLoop>
 #include "pimachine.h"
 #include "stringtransition.h"
+#include "pistates.h"
 
 const int PIMachine::msTimeout = 10;
 
@@ -26,8 +27,8 @@ void PIMachine::buildMachine()
   QState *pendingDisconnect = new QState(this);
   QState *disconnect = new QState(this);
   QState *suspended = new QState(this);
-  QState *suspending = new QState(this);
-  QState *prolongation = new QState(this);
+  QState *suspending = new PISuspendingState(this);
+  QState *prolongation = new PIProlongationState(this);
 
   // QFinalState *sFinal = new QFinalState(m_machine);
   setProperty("state", "UNDEFINED");
@@ -105,11 +106,11 @@ QString PIMachine::externalEventProcess(const QString &eventType)
   timer.start(msTimeout);
   loop.exec();
   if(timer.isActive()) {
-    qDebug("Wait for state change failed");
+    qDebug() << "[" << id() << "]PIMachine::externalEventProcess wait for state change failed";
     return QString("");
   }
   else
-    qDebug("state changed");
+    qDebug() << "[" << id() << "]PIMachine::externalEventProcess event processed";
   return property("state").toString();
 }
 

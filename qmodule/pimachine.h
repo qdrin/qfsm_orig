@@ -20,7 +20,7 @@ public:
   void release() { busy = false; emit released(); };
 signals:
   void externalSignal(const QString &eventType);
-  void callbackSignal(int id, const QString &eventType);
+  void sendCallback(int id, const QString cbName);
   void hasStopped();
   void hasStarted();
   void released();  // Ушел в "свободно"

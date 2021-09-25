@@ -17,4 +17,5 @@ bool StringTransition::eventTest(QEvent *e)
 }
 
 void StringTransition::onTransition(QEvent *e) {
+  qDebug() << "StringTransition::onTransition called, machine state\n";
 }

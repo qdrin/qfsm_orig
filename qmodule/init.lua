@@ -12,9 +12,14 @@ local log = require('log') -- some other Tarantool module
 local qfsmlib = require('qmodule.qfsmlib')
 -- Now you can use exported CPP functions from 'qmodule/qfsmlib.c' submodule in your code
 
---
--- Internal functions
---
+local callbacks = {
+  suspend=function(id)
+    log.info("'suspend' callback start. id=%s", id)
+  end,
+  prolong=function(id)
+    log.info("'prolong' callback start. id=%s", id)
+  end,
+}
 
 local machine_mt = {
   __index = {
@@ -54,7 +59,16 @@ local machine_mt = {
   }
 }
 
-local function new()
+local function set_callbacks(custom_callbacks)
+  callbacks = custom_callbacks or callbacks
+  log.info("qmodule.set_callbacks start")
+  local res, m = qfsmlib.set_callbacks(callbacks)
+  if res < 0 then return nil, m end
+  log.info("qmodule.set_callbacks finished: %s", res)
+  return res
+end
+
+local function new(custom_cbfunc)
   log.info("new called")
   local res, m = qfsmlib.new()
   log.info("new result=%s", res)
@@ -77,7 +91,9 @@ end
 -- Exported functions
 --
 return {
+    set_callbacks = set_callbacks,
     new = new,
     stop = stop,
     qfsmlib = qfsmlib,
+    callbacks = callbacks,
 }

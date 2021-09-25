@@ -18,6 +18,7 @@ add_library(lib SHARED
   qfsmlib.cpp
   smcontroller.cpp
   pimachine.cpp
+  pistates.cpp
   stringtransition.cpp
   ${MOC_SOURCES}
 )
