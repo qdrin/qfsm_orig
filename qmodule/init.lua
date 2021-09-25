@@ -11,10 +11,11 @@ local log = require('log') -- some other Tarantool module
 -- C library
 local qfsmlib = require('qmodule.qfsmlib')
 -- Now you can use exported CPP functions from 'qmodule/qfsmlib.c' submodule in your code
-
+local machines = {}
 local callbacks = {
   suspend=function(id)
-    log.info("'suspend' callback start. id=%s", id)
+    local productId = machines[id].productId
+    log.info("'suspend' callback start. id=%s, productId=%s", id, productId)
   end,
   prolong=function(id)
     log.info("'prolong' callback start. id=%s", id)
@@ -35,14 +36,16 @@ local machine_mt = {
       if not res then return nil, string.format("machine %s is not running", self.conn) end
       local res, error = self.conn:close()
       if res < 0 then return nil, error end
+      machines[self.conn] = nil
       return res
     end,
-    init = function(self, state)
+    init = function(self, productId, state)
+      self.productId = productId
       local status, res = self.conn:is_running()
       if not res then return nil, string.format("machine %s is not running", self.conn) end
-      local res, new_state = self.conn:init(state)
-      if res < 0 then return nil, new_state end
-      return new_state
+      status, res = self.conn:init(state)
+      if status < 0 then return nil, res end
+      return res
     end,
     get = function(self)
       local status, res = self.conn:is_running()
@@ -76,6 +79,7 @@ local function new(custom_cbfunc)
   local machine = setmetatable({
     conn = m,
 }, machine_mt)
+  machines[m] = machine
   return machine
 end
 

@@ -88,14 +88,7 @@ static int set_callbacks(struct lua_State *L)
     lua_pushstring(L, "qfsmlib.set_callbacks: argument must be a table");
     return 2;
   }
-  lua_State *cb = luaL_newstate();
-  lua_newtable(cb);
-  lua_getfield(L, -1, "suspend");
   controller->setCallbacks(L);
-  // lua_getfield(L, -1, "suspend");
-  // lua_pcall(L, 0,0,0);
-  // lua_getfield(L, -1, "prolong");
-  // lua_pcall(L, 0, 0, 0);
   lua_pushinteger(L, 1);
   return 1;
 }

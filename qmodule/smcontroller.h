@@ -11,6 +11,11 @@ struct MachineData {
   PIMachine* machine;
 };
 
+struct CallbackCollection {
+  lua_State *lState;
+  int callbacks;
+};
+
 class StateMachineController: public QThread
 {
   Q_OBJECT
@@ -18,7 +23,7 @@ private:
   QVector<MachineData*> machines;
   int maxMachines;
   bool m_isRunning;
-  lua_State *callbacks;
+  CallbackCollection callbacks;
 public:
   StateMachineController(): StateMachineController(1) {};
   StateMachineController(int _maxMachines);

@@ -46,15 +46,13 @@ QString StateMachineController::sendEvent(const int id, const QString &ev)
 void StateMachineController::onSendCallback(const int id, QString cbName)
 {
   qDebug() << "StateMachineController::onSendCallback("<< id << ", " << cbName << ") called\n";
-  QString cb_string;
-  QTextStream cb_script(&cb_string);
-  cb_script << "require('qmodule').callbacks['" << cbName << "'](" << id << ")";
-  qDebug() << "cb_string: " << cb_string << Qt::endl;
-  int load_stat = luaL_loadbuffer(
-    callbacks,cb_string.toStdString().c_str(),cb_string.length(),cbName.toStdString().c_str()
-    );
-  qDebug() << "StateMachineController::setCallbacks load_stat" << load_stat << Qt::endl;
-  lua_pcall(callbacks, 0,0,0);
+  const char* key;
+  qDebug() << "pushing" << callbacks.callbacks << "ref\n";
+  lua_rawgeti(callbacks.lState, LUA_REGISTRYINDEX, callbacks.callbacks);
+  if(lua_istable(callbacks.lState, -1)) qDebug() << "callback is table\n";
+  lua_getfield(callbacks.lState, -1, cbName.toStdString().c_str());
+  lua_pushinteger(callbacks.lState, id);
+  lua_pcall(callbacks.lState, 1,0,0);
 }
 
 void StateMachineController::run()
@@ -62,7 +60,6 @@ void StateMachineController::run()
   int argC = 0;
   QCoreApplication app(argC, nullptr);
   qDebug() << "StateMachineController::run() started\n";
-  callbacks = luaL_newstate();
   m_isRunning = true;
   app.exec();
 }
@@ -97,6 +94,10 @@ bool StateMachineController::isRunning(const int id)
 void StateMachineController::setCallbacks(lua_State *L)
 {
   qDebug() << "StateMachineController::setCallbacks called\n";
-  callbacks = L;
+  callbacks.lState = L;
+  qDebug() << "LUA_REGISTRYINDEX" << LUA_REGISTRYINDEX << Qt::endl;
+  int rid;
+  rid = luaL_ref(L, LUA_REGISTRYINDEX);
+  callbacks.callbacks = rid;
   qDebug() << "StateMachineController::setCallbacks finished\n";
 }
