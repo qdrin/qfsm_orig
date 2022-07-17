@@ -44,7 +44,7 @@ g.test_from_active = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
@@ -82,7 +82,7 @@ g.test_from_activeTrial = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
@@ -119,7 +119,7 @@ g.test_from_resuming = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
@@ -156,7 +156,7 @@ g.test_from_prolongation = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
@@ -193,7 +193,7 @@ g.test_from_suspending = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
@@ -231,7 +231,7 @@ g.test_from_suspended = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
@@ -271,7 +271,7 @@ g.test_from_waitingPayment_activeTrial = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
@@ -315,7 +315,7 @@ g.test_from_waitingPayment_active = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
@@ -358,7 +358,7 @@ g.test_from_price_changed = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
@@ -407,7 +407,7 @@ g.test_from_trial_with_immediate_characteristic = function()
     },
     tasks = {
       {
-        wakeAtFunction = "DEACTIVATE",
+        wakeAtFunction = "DISCONNECT_EXTERNAL",
         wakeAt = function(real)
           local dt = real - os.time()
           return dt >= -10 and dt < 10
