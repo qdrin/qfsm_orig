@@ -1,0 +1,53 @@
+# offer with N-day charging period
+offer1:
+  - id: offer1PriceTrial
+    name: "offer1PriceTrialName"
+    duration: 1
+    recurringChargePeriodType: day
+    recurringChargePeriodLength: 30
+    priceType: RecurringCharge
+    productStatus: ACTIVE_TRIAL
+    nextPrice: offer1PriceActive
+    priceAlterations: null
+  - id: offer1PriceActive
+    name: "offer1PriceActiveName"
+    duration: 0
+    recurringChargePeriodType: day
+    recurringChargePeriodLength: 30
+    priceType: RecurringCharge
+    productStatus: ACTIVE
+    nextPrice: null
+    priceAlterations:
+      - id: offer1Price3Alt
+        name: offer1Price3AltName
+        duration: 1
+        recurringChargePeriodType: day
+        recurringChargePeriodLength: 30
+        priceType: Discount
+        percentage: 100
+offer2:
+  - id: offer2PriceTrial
+    name: "offer1PriceTrialName"
+    duration: 2
+    recurringChargePeriodType: day
+    recurringChargePeriodLength: 30
+    priceType: RecurringCharge
+    productStatus: ACTIVE_TRIAL
+    nextPrice: offer2PriceActive
+    priceAlterations: null
+  - id: offer2PriceActive
+    name: "offer1PriceActiveName"
+    duration: 1
+    recurringChargePeriodType: day
+    recurringChargePeriodLength: 30
+    priceType: RecurringCharge
+    productStatus: ACTIVE
+    nextPrice: null
+    priceAlterations:
+      - id: offer1Price3Alt
+        name: offer1Price3AltName
+        duration: 3
+        recurringChargePeriodType: day
+        recurringChargePeriodLength: 30
+        priceType: Discount
+        percentage: 100

@@ -1,0 +1,7 @@
+max_machines: 3
+immediate_task_time: 300
+payment_waiting_time: 10800
+price_ended_before_time: 7200
+suspend_duration: 7776000
+apple_double_billing_offers:
+  offer3: 600

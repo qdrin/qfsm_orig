@@ -1,0 +1,41 @@
+-- name of the package to be published
+package = 'qfsm'
+version = '1.2.1-3'
+source  = {
+    url    = 'https://cicd-git.megafon.ru/MFactory/ArtCode/product-inventory/qfsm.git',
+    -- url    = 'git://cicd-git.megafon.ru/MFactory/ArtCode/product-inventory/qfsm.git',
+    branch = 'promo',
+}
+
+description = {
+    summary  = "Qt-based state machine  module for Tarantool. NG.PSI",
+    detailed = [[
+      Module realizes FSM logic for NG.PSI (CA.PI)
+      Analysis lives here: https://confluence.nexign.com/pages/viewpage.action?spaceKey=bspanalytics&title=NG+PSI
+    ]],
+    homepage = 'https://cicd-git.megafon.ru/mfactory/artcode/product-inventory/qfsm',
+    maintainer = "Dmitry Kudrin <dmitry.kudrin@nexign.com>",
+    license  = 'BSD2',
+}
+
+dependencies = {
+    'lua >= 5.1',
+    'icu-date',
+    'checks >= 3.1',
+}
+
+external_dependencies = {
+    TARANTOOL = {
+        header = 'tarantool/module.h',
+    },
+}
+
+build = {
+    type = 'cmake',
+    variables = {
+        CMAKE_BUILD_TYPE="RelWithDebInfo",
+        TARANTOOL_DIR="$(TARANTOOL_DIR)",
+        TARANTOOL_INSTALL_LIBDIR="$(LIBDIR)",
+        TARANTOOL_INSTALL_LUADIR="$(LUADIR)",
+    },
+}
