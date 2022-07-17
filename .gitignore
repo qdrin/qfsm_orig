@@ -28,3 +28,4 @@ VERSION
 CTestTestfile.cmake
 Testing
 CTestTestfile.cmake
+*.rock
